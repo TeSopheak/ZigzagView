@@ -1,22 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".MainActivity">
+    android:fillViewport="true">
 
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:context=".MainActivity">
 
         <ir.beigirad.zigzagview.ZigzagView
             android:layout_width="match_parent"
             android:layout_height="240dp"
             app:zigzagBackgroundColor="#FF8F00"
             app:zigzagElevation="8dp"
-            app:zigzagHeight="7dp"
+            app:zigzagHeight="5dp"
+            app:zigzagPaddingContent="16dp"
             app:zigzagShadowAlpha="0.9"
-            app:zigzagSides="bottom"
-            app:zigzagPaddingContent="16dp">
+            app:zigzagSides="bottom">
 
             <TextView
                 android:layout_width="match_parent"
@@ -29,33 +33,36 @@
 
         </ir.beigirad.zigzagview.ZigzagView>
 
-    <ir.beigirad.zigzagview.ZigzagView
-        android:layout_width="match_parent"
-        android:layout_height="240dp"
-        app:zigzagBackgroundColor="#0277BD"
-        app:zigzagElevation="16dp"
-        app:zigzagHeight="10dp"
-        app:zigzagPaddingContent="16dp"
-        app:zigzagShadowAlpha="1"
-        app:zigzagSides="top|bottom">
-
-        <LinearLayout
+        <ir.beigirad.zigzagview.ZigzagView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:orientation="vertical">
+            android:layout_height="240dp"
+            app:zigzagBackgroundColor="#0277BD"
+            app:zigzagElevation="16dp"
+            app:zigzagHeight="10dp"
+            app:zigzapType="outer"
+            app:zigzagPaddingContent="16dp"
+            app:zigzagShadowAlpha="1"
+            app:zigzagSides="top|bottom">
 
-            <TextView
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:gravity="center"
-                android:text="ZigzagView"
-                android:textColor="#000000"
-                android:textSize="23sp" />
+                android:orientation="vertical">
 
-        </LinearLayout>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="ZigzagView"
+                    android:textColor="#000000"
+                    android:textSize="23sp" />
+
+            </LinearLayout>
 
 
-    </ir.beigirad.zigzagview.ZigzagView>
+        </ir.beigirad.zigzagview.ZigzagView>
 
-</LinearLayout>
+    </LinearLayout>
+
+</ScrollView>

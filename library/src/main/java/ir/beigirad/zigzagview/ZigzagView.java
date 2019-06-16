@@ -29,6 +29,8 @@ import static android.graphics.PorterDuff.Mode.SRC_IN;
 public class ZigzagView extends FrameLayout {
     private static final int ZIGZAG_TOP = 1;
     private static final int ZIGZAG_BOTTOM = 2; // default to be backward compatible.Like google ;)
+    private static final int ZIGZAG_INNER = 10; // default to be backward compatible.Like google ;)
+    private static final int ZIGZAG_OUTER = 11; // default to be backward compatible.Like google ;)
 
     private int zigzagHeight;
     private int zigzagElevation;
@@ -40,6 +42,7 @@ public class ZigzagView extends FrameLayout {
     private int zigzagPaddingTop;
     private int zigzagPaddingBottom;
     private int zigzagSides;
+    private int zigzagType;
     private float zigzagShadowAlpha;
 
     private Path pathZigzag = new Path();
@@ -87,13 +90,14 @@ public class ZigzagView extends FrameLayout {
         zigzagPaddingTop = (int) a.getDimension(R.styleable.ZigzagView_zigzagPaddingTop, zigzagPadding);
         zigzagPaddingBottom = (int) a.getDimension(R.styleable.ZigzagView_zigzagPaddingBottom, zigzagPadding);
         zigzagSides = a.getInt(R.styleable.ZigzagView_zigzagSides, ZIGZAG_BOTTOM);
+        zigzagType = a.getInt(R.styleable.ZigzagView_zigzapType, ZIGZAG_INNER);
         zigzagShadowAlpha = a.getFloat(R.styleable.ZigzagView_zigzagShadowAlpha, 0.5f);
         a.recycle();
 
         zigzagElevation = Math.min(zigzagElevation, 25);
         zigzagShadowAlpha = Math.min(zigzagShadowAlpha, 100);
 
-        paintZigzag = new Paint();
+        paintZigzag = new Paint(Paint.ANTI_ALIAS_FLAG);
         paintZigzag.setColor(zigzagBackgroundColor);
         paintZigzag.setStyle(Style.FILL);
 
@@ -139,14 +143,14 @@ public class ZigzagView extends FrameLayout {
         float bottom = rectZigzag.bottom;
 
         pathZigzag.moveTo(right, bottom);
-        pathZigzag.lineTo(right, top);
+        pathZigzag.lineTo(right, isTypeInner() ? top : top + zigzagHeight);
 
         if (containsSide(zigzagSides, ZIGZAG_TOP))
             drawHorizontalSide(pathZigzag, left, top, right, true);
         else
             pathZigzag.lineTo(left, top);
 
-        pathZigzag.lineTo(left, bottom);
+        pathZigzag.lineTo(left, isTypeInner() ? bottom : bottom - zigzagHeight);
 
         if (containsSide(zigzagSides, ZIGZAG_BOTTOM))
             drawHorizontalSide(pathZigzag, left, bottom, right, false);
@@ -171,52 +175,45 @@ public class ZigzagView extends FrameLayout {
         output.copyTo(shadow);
         input.destroy();
         output.destroy();
-
     }
 
     private void drawHorizontalSide(Path path, float left, float y, float right, boolean isTop) {
         int h = zigzagHeight;
-        int seed = 2 * h;
-        int width = (int) (right - left);
-        int count = width / seed;
-        int diff = width - (seed * count);
-        int sideDiff = diff / 2;
+        float seed = 2 * h;
+        float width = (int) (right - left);
+        int count = (int) (width / seed);
+        float diff = width - (seed * count);
+        seed += diff / count;
 
-        float halfSeed = (float) (seed / 2);
+        float halfSeed = seed / 2;
         float innerHeight = isTop ? y + h : y - h;
+        float halfPosition = isTypeInner() ? innerHeight : y;
+        float endPosition = isTypeInner() ? y : innerHeight;
 
         if (isTop) {
             for (int i = count; i > 0; i--) {
-                int startSeed = (i * seed) + sideDiff + (int) left;
-                int endSeed = startSeed - seed;
+                float startSeed = (i * seed) + left;
+                float endSeed = startSeed - seed;
 
-                if (i == 1) {
-                    endSeed = endSeed - sideDiff;
-                }
-
-                path.lineTo(startSeed - halfSeed, innerHeight);
-                path.lineTo(endSeed, y);
+                path.lineTo(startSeed - halfSeed, halfPosition);
+                path.lineTo(endSeed, endPosition);
             }
         } else {
             for (int i = 0; i < count; i++) {
-                int startSeed = (i * seed) + sideDiff + (int) left;
-                int endSeed = startSeed + seed;
+                float startSeed = ((i * seed) + left);
+                float endSeed = (startSeed + seed);
 
-                if (i == 0) {
-                    startSeed = (int) left + sideDiff;
-                } else if (i == count - 1) {
-                    endSeed = endSeed + sideDiff;
-                }
-
-                path.lineTo(startSeed + halfSeed, innerHeight);
-                path.lineTo(endSeed, y);
+                path.lineTo(startSeed + halfSeed, halfPosition);
+                path.lineTo(endSeed, endPosition);
             }
         }
-
-
     }
 
     private boolean containsSide(int flagSet, int flag) {
         return (flagSet | flag) == flagSet;
+    }
+
+    private boolean isTypeInner() {
+        return zigzagType == ZIGZAG_INNER;
     }
 }
